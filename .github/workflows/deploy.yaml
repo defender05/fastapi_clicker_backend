@@ -1,0 +1,65 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+
+#  pull_request:
+#    types: [ opened, synchronize ]
+
+jobs:
+  checkout:
+    runs-on: self-hosted
+
+    steps:
+      - name: Clean repository
+        run: |
+          if [ "$(ls -A /home/user/actions-runner/_work/backend/backend)" ]; then
+            echo "backend folder is not empty. Proceeding with cleaning..."
+            rm -rf /home/user/actions-runner/_work/backend/backend/*
+          else
+            echo "backend folder is already empty. Skipping cleaning."
+          fi
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+  deploy:
+    runs-on: self-hosted
+    needs: checkout
+
+
+
+    steps:
+      - name: Remove previous containers
+        run: |
+          if docker ps -a --format '{{.Names}}' | grep -q backend; then
+            docker stop backend && docker rm backend
+          else
+            echo "Container backend not found."
+            continue
+          fi
+          echo "Container backend was removed."
+          
+      - name: Check environment variables
+        run: |
+          echo "RUN_TYPE: $RUN_TYPE"
+
+      - name: Build and start docker containers
+        run: |
+          docker build -t backend_image .
+          docker run -d \
+          -v backend_data:/var/lib/backend_data \
+          -p 8000:8000 \
+          --env-file /home/user/environment/.env \
+          --name backend \
+          --network appnet \
+          --restart=always \
+          backend_image
+
+      - name: Finish
+        run: echo "Deployment successful"
+

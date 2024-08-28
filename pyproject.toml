@@ -1,0 +1,29 @@
+[tool.poetry]
+name ="fastapi_clicker_backend"
+version = "0.1.0"
+description = "aiogram + fastapi + redis"
+authors = ["Алиев Алил <alil@mail.ru>"]
+readme = "README.md"
+packages = [{include = "fastapi_clicker_backend"}]
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.111.1"}
+aiogram = "^3.12.0"
+loguru = "^0.7.2"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.32"}
+alembic = "^1.13.1"
+asyncpg = "^0.29.0"
+redis = "^5.0.8"
+faststream = {extras = ["redis"], version = "^0.5.18"}
+#miniopy-async = "^1.20.1"
+fastapi-utilities = "^0.2.0"
+APScheduler = "^3.10.4"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
